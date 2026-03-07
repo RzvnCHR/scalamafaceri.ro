@@ -31,27 +31,63 @@
       <li><a href="/" data-scroll="contact" class="js-scroll-link">Contact</a></li>
     </ul>
   </nav>
+    
+<script>
+(function () {
+  function scrollToSection(targetId) {
+    const target = document.getElementById(targetId);
+    if (!target) return false;
 
-    <script>
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener("click", function(e) {
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
 
-    e.preventDefault();
+    history.replaceState(null, "", window.location.pathname);
+    return true;
+  }
 
-    const target = document.querySelector(this.getAttribute("href"));
+  function isHomePage() {
+    const path = window.location.pathname;
+    return path === "/" || path === "/index.html" || path === "";
+  }
 
-    if (target) {
-      target.scrollIntoView({
-        behavior: "smooth"
-      });
+  document.addEventListener("click", function (e) {
+    const link = e.target.closest(".js-scroll-link");
+    if (!link) return;
 
-      setTimeout(() => {
-        history.replaceState(null, null, window.location.pathname);
-      }, 500);
+    const targetId = link.dataset.scrollTarget;
+    if (!targetId) return;
+
+    if (isHomePage()) {
+      e.preventDefault();
+      scrollToSection(targetId);
+    } else {
+      e.preventDefault();
+      sessionStorage.setItem("scrollTarget", targetId);
+      window.location.href = "/";
     }
-
   });
-});
+
+  window.addEventListener("load", function () {
+    const targetId = sessionStorage.getItem("scrollTarget");
+    if (!targetId) return;
+
+    sessionStorage.removeItem("scrollTarget");
+
+    let attempts = 0;
+    const maxAttempts = 30;
+
+    const timer = setInterval(() => {
+      const done = scrollToSection(targetId);
+      attempts++;
+
+      if (done || attempts >= maxAttempts) {
+        clearInterval(timer);
+      }
+    }, 100);
+  });
+})();
 </script>
         
 </header>
@@ -457,6 +493,7 @@ backToTop.addEventListener("click", function(e){
 </body>
 
 </html>
+
 
 
 
