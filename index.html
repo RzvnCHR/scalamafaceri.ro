@@ -25,64 +25,63 @@
 
     <ul id="menu">
 
-      <li><a href="/" data-scroll="services" class="nav-scroll">Servicii</a></li>
+      <li><a href="/" data-scroll="services" class="js-scroll-link">Servicii</a></li>
       <li><a href="/portofolio/">Portofoliu</a></li>
       <li><a href="/cerere-oferta">Cerere de Ofertă</a></li>
-      <li><a href="/" data-scroll="contact" class="nav-scroll">Contact</a></li>
+      <li><a href="/" data-scroll="contact" class="js-scroll-link">Contact</a></li>
     </ul>
   </nav>
 
     <script>
-document.querySelectorAll('.nav-scroll').forEach(link => {
+(function () {
+  function goToTarget(targetId) {
+    const target = document.getElementById(targetId);
+    if (!target) return false;
 
-  link.addEventListener('click', function(e){
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", window.location.pathname);
+    return true;
+  }
 
-    const targetId = this.dataset.scroll;
+  document.addEventListener("click", function (e) {
+    const link = e.target.closest(".js-scroll-link");
+    if (!link) return;
 
-    if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+    const targetId = link.getAttribute("data-scroll-target");
+    if (!targetId) return;
 
+    const isHome =
+      window.location.pathname === "/" ||
+      window.location.pathname.endsWith("/index.html");
+
+    if (isHome) {
       e.preventDefault();
-
-      const target = document.getElementById(targetId);
-
-      if(target){
-        target.scrollIntoView({behavior:"smooth"});
-        history.replaceState(null,null,window.location.pathname);
-      }
-
+      goToTarget(targetId);
     } else {
-
       sessionStorage.setItem("scrollTarget", targetId);
-
     }
-
   });
 
-});
-
-
-window.addEventListener("load", () => {
-
-  const targetId = sessionStorage.getItem("scrollTarget");
-
-  if(targetId){
+  document.addEventListener("DOMContentLoaded", function () {
+    const targetId = sessionStorage.getItem("scrollTarget");
+    if (!targetId) return;
 
     sessionStorage.removeItem("scrollTarget");
 
-    const target = document.getElementById(targetId);
+    let tries = 0;
+    const maxTries = 20;
 
-    if(target){
+    const interval = setInterval(() => {
+      const done = goToTarget(targetId);
+      tries++;
 
-      setTimeout(()=>{
-        target.scrollIntoView({behavior:"smooth"});
-      },100);
-
-    }
-
-  }
-
-});
-    </script>
+      if (done || tries >= maxTries) {
+        clearInterval(interval);
+      }
+    }, 100);
+  });
+})();
+</script>
         
 </header>
 
@@ -503,6 +502,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 </body>
 
 </html>
+
 
 
 
