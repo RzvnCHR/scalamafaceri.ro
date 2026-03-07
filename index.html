@@ -33,54 +33,25 @@
   </nav>
 
     <script>
-(function () {
-  function goToTarget(targetId) {
-    const target = document.getElementById(targetId);
-    if (!target) return false;
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener("click", function(e) {
 
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-    history.replaceState(null, "", window.location.pathname);
-    return true;
-  }
+    e.preventDefault();
 
-  document.addEventListener("click", function (e) {
-    const link = e.target.closest(".js-scroll-link");
-    if (!link) return;
+    const target = document.querySelector(this.getAttribute("href"));
 
-    const targetId = link.getAttribute("data-scroll-target");
-    if (!targetId) return;
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth"
+      });
 
-    const isHome =
-      window.location.pathname === "/" ||
-      window.location.pathname.endsWith("/index.html");
-
-    if (isHome) {
-      e.preventDefault();
-      goToTarget(targetId);
-    } else {
-      sessionStorage.setItem("scrollTarget", targetId);
+      setTimeout(() => {
+        history.replaceState(null, null, window.location.pathname);
+      }, 500);
     }
+
   });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const targetId = sessionStorage.getItem("scrollTarget");
-    if (!targetId) return;
-
-    sessionStorage.removeItem("scrollTarget");
-
-    let tries = 0;
-    const maxTries = 20;
-
-    const interval = setInterval(() => {
-      const done = goToTarget(targetId);
-      tries++;
-
-      if (done || tries >= maxTries) {
-        clearInterval(interval);
-      }
-    }, 100);
-  });
-})();
+});
 </script>
         
 </header>
@@ -486,6 +457,7 @@ backToTop.addEventListener("click", function(e){
 </body>
 
 </html>
+
 
 
 
