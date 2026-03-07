@@ -25,12 +25,65 @@
 
     <ul id="menu">
 
-      <li><a href="#services">Servicii</a></li>
+      <li><a href="/" data-scroll="services">Servicii</a></li>
       <li><a href="/portofolio/">Portofoliu</a></li>
       <li><a href="/cerere-oferta">Cerere de Ofertă</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="/" data-scroll="contact">Contact</a></li>
     </ul>
   </nav>
+
+    <script>
+document.querySelectorAll('.nav-scroll').forEach(link => {
+
+  link.addEventListener('click', function(e){
+
+    const targetId = this.dataset.scroll;
+
+    if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+
+      e.preventDefault();
+
+      const target = document.getElementById(targetId);
+
+      if(target){
+        target.scrollIntoView({behavior:"smooth"});
+        history.replaceState(null,null,window.location.pathname);
+      }
+
+    } else {
+
+      sessionStorage.setItem("scrollTarget", targetId);
+
+    }
+
+  });
+
+});
+
+
+window.addEventListener("load", () => {
+
+  const targetId = sessionStorage.getItem("scrollTarget");
+
+  if(targetId){
+
+    sessionStorage.removeItem("scrollTarget");
+
+    const target = document.getElementById(targetId);
+
+    if(target){
+
+      setTimeout(()=>{
+        target.scrollIntoView({behavior:"smooth"});
+      },100);
+
+    }
+
+  }
+
+});
+    </script>
+        
 </header>
 
 <a href="#hero" class="back-to-top" id="backToTop">
@@ -450,6 +503,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 </body>
 
 </html>
+
 
 
 
